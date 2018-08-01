@@ -1,0 +1,2 @@
+useDynLib(optiminv)
+export(lasvdgpEsl2d,lasvdgpEI,evalLasvdgpEI)
