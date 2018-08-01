@@ -1,6 +1,8 @@
-LASVDGP_PATH = `echo 'library(lasvdgpnovo); cat(system.file(package="lasvdgpnovo",mustWork=TRUE))'\
-| "${R_HOME}/bin/R" --vanilla --slave`/libs/lasvdgpnovo.so
+NLEQ_FLAG = `echo 'library(nleqslv);pkgroot <- system.file(package="nleqslv",mustWork=TRUE);arch <- .Platform[["r_arch"]];if(arch!="") arch <- paste("/",arch,sep="");ext <- .Platform[["dynlib.ext"]];pkgroot <- paste(pkgroot,"/libs",sep="");pkgpath <- paste(pkgroot,arch,"/nleqslv",ext,sep="");cat(pkgpath)'\
+	  | "${R_HOME}/bin/R" --vanilla --slave`
+LASVDGP_FLAG = `echo 'library(lasvdgpnovo);pkgroot <- system.file(package="lasvdgpnovo",mustWork=TRUE);arch <- .Platform[["r_arch"]];if(arch!="") arch <- paste("/",arch,sep="");ext <- .Platform[["dynlib.ext"]];pkgroot <- paste(pkgroot,"/libs",sep="");pkgpath <- paste(pkgroot,arch,"/lasvdgpnovo",ext,sep="");cat(pkgpath)'\
+	  | "${R_HOME}/bin/R" --vanilla --slave`
 CXX_STD = CXX11
 PKG_CXXFLAGS = -g -Wall -I include $(SHLIB_OPENMP_CFLAGS)
 PKG_CFLAGS = -g -Wall -I include
-PKG_LIBS = ${LASVDGP_PATH} ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS}
+PKG_LIBS = ${LASVDGP_FLAG} ${NLEQ_FLAG} ${LAPACK_LIBS} ${BLAS_LIBS} ${FLIBS}

@@ -1,6 +1,8 @@
 #include <cstdlib>
 #include <ctime>
 #include "saoptim.hpp"
+#include "kernelfn.hpp"
+#include "annealfn.hpp"
 #include "fminfn.hpp"
 extern "C"{
   #include "matrix.h"

@@ -1,5 +1,7 @@
 #include "fminfn.hpp"
 #include "saoptim.hpp"
+#include "kernelfn.hpp"
+#include "annealfn.hpp"
 #include "lasvdgpfn.hpp"
 #include "lasvdgpeifn.hpp"
 #ifdef _OPENMP
