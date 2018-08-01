@@ -1,7 +1,6 @@
 #include<R.h>
 #include"matrix.h"
 #include"nleqslv.h"
-#include"newtonsolver.h"
 
 static targfun sfunc=NULL;
 static targderv sdfunc=NULL;

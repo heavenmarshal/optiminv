@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "lasvdgp.h"
 #include "gp_sep.h"
 #include "matrix.h"

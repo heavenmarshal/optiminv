@@ -5,6 +5,8 @@
 #define CUBE(x) ((x)*(x)*(x))
 #define SQR(x) ((x)*(x))
 #define SGN(x) ((double)((0.0<x)-(0.0>x)))
+#define SQRPI2 2.50662827463
+#define LOG6 1.79175946923
 
 double transfun(double x, double upb)
 {

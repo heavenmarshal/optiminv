@@ -1,29 +1,31 @@
-#include "saoptim.hpp"
-#include "annealfn.hpp"
 #include "fminfn.hpp"
-#include "kernelfn.hpp"
+#include "saoptim.hpp"
 #include "lasvdgpfn.hpp"
 #include "lasvdgpeifn.hpp"
-
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 extern "C"{
   #include "matrix.h"
+  #include "linalg.h"
   #include "rhelp.h"
   #include "lasvdgp.h"
   #include "lasvdgpext.h"
+  #include "oeiinfo.h"
 }
 
 extern "C"{
   void lasvdgpEsl2d(int *nparam_, int *maxit_, int *tmax_, unsigned int *ndesign_,
 		    unsigned int *tlen_, unsigned int *n0_, unsigned int *nn_,
 		    unsigned int *nfea_, unsigned int *resvdThres_, unsigned int *every_,
-		    unsigned int *nthread_, unsigned int nstarts_,double *frac_,
-		    double *gstart_, double *ti_, double *kersig_, double *xstarts_
+		    unsigned int *nthread_, unsigned int* nstarts_,double *frac_,
+		    double *gstart_, double *ti_, double *kersig_, double *xstarts_,
 		    double *xi_, double *design_, double *resp_, double *mins,
 		    double *argmins, double *fvals, double *samples)
   {
     int nsamples, slen;
     unsigned int mxth, ndesign, nparam, tlen;
-    double **design, **resp, **starts;
+    double **design, **resp, **xstarts;
     ndesign = *ndesign_;
     nparam = *nparam_;
     tlen = *tlen_;
@@ -94,7 +96,7 @@ extern "C"{
     lasvdgpEiFn eifn(nparam, ndesign, tlen, *n0_, *nn_,
 		     *nfea_, *resvdThres_, *every_, *frac_,
 		     *gstart_, design, resp, *kmin_, xi_);
-    nlogAnneal anneal(*ti);
+    nlogAnneal anneal(*ti_);
     normalKernel kernel(nparam, *kersig_);
     saOptim saoptim(nparam, *maxit_, *tmax_, xstart_, &eifn,
 		    &anneal, &kernel);
@@ -115,7 +117,7 @@ extern "C"{
     double **design, **resp, **candid;
     ndesign = *ndesign_;
     nparam = *nparam_;
-    tlen = *tlen;
+    tlen = *tlen_;
     ncand = *ncand_;
     design = new_matrix_bones(design_, ndesign, nparam);
     resp = new_matrix_bones(resp_, ndesign, tlen);
@@ -144,7 +146,7 @@ extern "C"{
       double varres, iomemu2, bound, mumk, z2, ei;
       double *amat, *mub2star;
       lasvdGP* lasvdgp;
-      z2 = linalg_ddot(tlen, xi, 1, xi, 1);
+      z2 = linalg_ddot(tlen, xi_, 1, xi_, 1);
       for(i = start; i < ncand; i+=step)
       {
 	lasvdgp = newlasvdGP(candid[i], design, resp, ndesign, nparam, tlen,

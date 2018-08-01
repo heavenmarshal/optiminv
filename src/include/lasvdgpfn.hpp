@@ -10,13 +10,13 @@ public:
   lasvdgpFn(int nparam_, unsigned int ndesign_, unsigned int tlen_, unsigned int n0_,
 	    unsigned int nn_, unsigned int nfea_, unsigned int resvdThres_,
 	    unsigned int every_, double frac_, double gstart_, double **design_,
-	    double **resp):
-    fminfn(nparam_), ndesign(ndesign_), tlen(tlen_), n0(n0_), nn(nn_), nfea(nfea_),
+	    double **resp_):
+    fminFn(nparam_), ndesign(ndesign_), tlen(tlen_), n0(n0_), nn(nn_), nfea(nfea_),
     resvdThres(resvdThres_), every(every_), frac(frac_), gstart(gstart_), design(design_),
     resp(resp_), lasvdgp(NULL){};
   virtual ~lasvdgpFn()
   {
-    rmlasvdgp();
+    rmlasvdGP();
   }
 protected:
   unsigned int ndesign, tlen, n0, nn, nfea;
@@ -33,9 +33,9 @@ public:
   lasvdgpEsl2dFn(int nparam_, unsigned int ndesign_, unsigned int tlen_, unsigned int n0_,
 		 unsigned int nn_, unsigned int nfea_, unsigned int resvdThres_,
 		 unsigned int every_, double frac_, double gstart_, double **design_,
-		 double **resp, double *xi_):
+		 double **resp_, double *xi_):
     lasvdgpFn(nparam_, ndesign_, tlen_, n0_,  nn_, nfea_, resvdThres_,
-	      every_, frac_, gstart_, **design_,  **resp),xi(xi_){};
+	      every_, frac_, gstart_, design_,  resp_),xi(xi_){};
 
   double evaluate(double *x);
 private:

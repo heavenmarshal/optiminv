@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "lasvdgpeifn.hpp"
 extern "C"{
   #include "oeiinfo.h"
@@ -9,15 +10,15 @@ extern "C"{
 lasvdgpEiFn::lasvdgpEiFn(int nparam_, unsigned int ndesign_, unsigned int tlen_, unsigned int n0_,
 			 unsigned int nn_, unsigned int nfea_, unsigned int resvdThres_,
 			 unsigned int every_, double frac_, double gstart_, double **design_,
-			 double **resp, double kmin_, double *xi_):
+			 double **resp_, double kmin_, double *xi_):
   lasvdgpFn(nparam_, ndesign_, tlen_, n0_,  nn_, nfea_, resvdThres_,
-	    every_, frac_, gstart_, **design_,  **resp), kmin(kmin_), xi(xi_){
+	    every_, frac_, gstart_, design_,  resp_), kmin(kmin_), xi(xi_){
   z2 = linalg_ddot(tlen, xi, 1, xi, 1);
 }
 
 double lasvdgpEiFn::evaluate(double *x)
 {
-  int nbas, i;
+  int nbas;
   double ei, varres, iomemu2, bound, mumk;
   double *amat, *mub2star;
 

@@ -1,9 +1,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "saoptim.hpp"
-#include "kernelfn.hpp"
 #include "fminfn.hpp"
-#include "annealfn.hpp"
 extern "C"{
   #include "matrix.h"
 }
@@ -28,7 +26,7 @@ saOptim::~saOptim()
 
 void saOptim::optim()
 {
-  int i, k;
+  int k;
   double y, ytry, dy, logru;
   double *x, *xtry;
   std::uniform_real_distribution<double> distribution(0.0,1.0);
@@ -39,11 +37,12 @@ void saOptim::optim()
 
   while(its < maxit)
   {
-    temperature = annel->annealing(its+1,this);
+    temperature = anneal->annealing(its+1,this);
     k = 0;
     while((k < tmax) && (its < maxit))
     {
       kernel->propose(x, xtry, this);
+      ytry = fmin -> evaluate(xtry);
       // todo: check finite
       dy = ytry - y;
       logru = distribution(generator);

@@ -43,7 +43,7 @@ double lasvdgpEsl2dFn::evaluate(double *x)
   for(i = 0; i < nbas; ++i)
   {
     predGPsep_lite(lasvdgp->gpseps[i], 1, &x, &cmean, &cs2, &cdf,NULL);
-    esl2d += sq(lasvdgp->reds[i])*(sq(cmean - hitcxi[i])+cs2);
+    esl2d += sq(lasvdgp->reds[i])*(sq(cmean - hatcxi[i])+cs2);
   }
   free(hatcxi);
   rmlasvdGP();
