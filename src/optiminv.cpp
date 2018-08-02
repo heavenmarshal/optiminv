@@ -145,8 +145,7 @@ extern "C"{
       unsigned int i, start, step;
       start = 0; step = 1;
 #endif
-      double varres, iomemu2, bound, mumk, z2, ei;
-      double *amat, *mub2star;
+      double z2;
       lasvdGP* lasvdgp;
       z2 = linalg_ddot(tlen, xi_, 1, xi_, 1);
       for(i = start; i < ncand; i+=step)
@@ -155,26 +154,15 @@ extern "C"{
 			     *nn_, *n0_, *nfea_, *nn_, 1, *frac_, *gstart_);
 	jmlelasvdGP(lasvdgp, 100, 0);
 	iterlasvdGP(lasvdgp, *resvdThres_, *every_, 100, 0);
-	amat = new_vector(lasvdgp->nbas);
-	mub2star = new_vector(lasvdgp->nbas);
-	lasvdgpEIhelp(lasvdgp, candid[i], xi_, &varres, &iomemu2, &bound, amat,
-		      mub2star, &mumk);
-	iomemu2 += z2;
-	mumk -= (*kmin_);
 #ifdef _OPENMP
 #pragma omp critical
 	{
 #endif
-	  oeiinfo(1,lasvdgp->nbas,tlen, varres, *kmin_, &iomemu2, &bound,
-		  amat, mub2star, &mumk, &ei);
+	  eival[i] = evalEI(lasvdgp, candid[i], xi_, z2, *kmin_);
 #ifdef _OPENMP
 	}
 #endif
-	ei -= mumk;
-	eival[i] = ei;
 	deletelasvdGP(lasvdgp);
-	free(amat);
-	free(mub2star);
       }
 #ifdef _OPENMP
     }

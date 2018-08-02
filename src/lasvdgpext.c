@@ -3,6 +3,7 @@
 #include "gp_sep.h"
 #include "matrix.h"
 #include "linalg.h"
+#include "oeiinfo.h"
 
 void predlasvdGPext(lasvdGP *lasvdgp, double *x, double *cmean,
 		    double *cs2, double *sig2hat)
@@ -47,7 +48,6 @@ void lasvdgpEIhelp(lasvdGP *lasvdgp, double* x, double *xi, double *varres,
   predlasvdGPext(lasvdgp, x, cmean, cs2, varres);
   linalg_dgemv(CblasTrans, tlen, nbas, 1.0, &(lasvdgp->basis), tlen, xi, 1,
 	       0.0, bz, 1);
-  *iomemu2 = 0.0;
   maxval = -1.0;
   for(i=0; i<nbas; ++i)
   {
@@ -69,4 +69,22 @@ void lasvdgpEIhelp(lasvdGP *lasvdgp, double* x, double *xi, double *varres,
   free(cmean);
   free(cs2);
   free(bz);
+}
+double evalEI(lasvdGP* lasvdgp, double *x, double *xi, double z2, double kmin)
+{
+  double varres, iomemu2, bound, mumk, ei;
+  double *amat, *mub2star;
+  amat = new_vector(lasvdgp->nbas);
+  mub2star = new_vector(lasvdgp->nbas);
+  mumk = z2;
+  iomemu2 = z2;
+  lasvdgpEIhelp(lasvdgp, x, xi, &varres, &iomemu2, &bound, amat,
+		mub2star, &mumk);
+  mumk -= kmin;
+  oeiinfo(1,lasvdgp->nbas,lasvdgp->tlen, varres, kmin, &iomemu2, &bound,
+	  amat, mub2star, &mumk, &ei);
+  ei -= mumk;
+  free(amat);
+  free(mub2star);
+  return ei;
 }

@@ -18,22 +18,9 @@ lasvdgpEiFn::lasvdgpEiFn(int nparam_, unsigned int ndesign_, unsigned int tlen_,
 
 double lasvdgpEiFn::evaluate(double *x)
 {
-  int nbas;
-  double ei, varres, iomemu2, bound, mumk;
-  double *amat, *mub2star;
-
+  double ei;
   fitlasvdGP(x);
-  nbas = lasvdgp->nbas;
-  amat = new_vector(nbas);
-  mub2star = new_vector(nbas);
-  lasvdgpEIhelp(lasvdgp, x, xi, &varres, &iomemu2, &bound, amat, mub2star, &mumk);
-  iomemu2 += z2;
-  mumk -= kmin;
-  oeiinfo(1, nbas, tlen, varres, kmin, &iomemu2, &bound,
-	  amat, mub2star, &mumk, &ei);
-  ei -= mumk;
+  ei = evalEI(lasvdgp, x, xi, z2, kmin);
   rmlasvdGP();
-  free(amat);
-  free(mub2star);
   return -ei;			// minimize negative ei
 }

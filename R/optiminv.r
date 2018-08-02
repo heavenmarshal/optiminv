@@ -12,16 +12,16 @@ lasvdgpEsl2d <- function(design, resp, xi, nstarts=1, n0=5, nn=10,
 {
     ndesign <- nrow(design)
     nparam <- ncol(design)
-    tlen <- ncol(resp)
+    tlen <- nrow(resp)
     nsamples <- maxit+1
     logpost <- apply(resp,2,evallogpost,xi,tlen)
     post <- exp(logpost)
     idx <- sample(1:ndesign,nstarts,replace=TRUE,prob=post)
     xstarts <- design[idx,,drop=FALSE]
     out <- .C("lasvdgpEsl2d", as.integer(nparam), as.integer(maxit),
-              as.integer(ndesign), as.integer(tlen), as.integer(n0),
+              as.integer(tmax), as.integer(ndesign), as.integer(tlen), as.integer(n0),
               as.integer(nn), as.integer(nfea), as.integer(resvdThres),
-              as.integer(every), as.integer(nthread), nas.integer(nstarts),
+              as.integer(every), as.integer(nthread), as.integer(nstarts),
               as.double(frac), as.double(gstart), as.double(ti),
               as.double(kersig), as.double(t(xstarts)), as.double(xi),
               as.double(t(design)), as.double(resp), mins = double(nstarts),
@@ -39,7 +39,7 @@ lasvdgpEI <- function(design, resp, xi, n0=5, nn=10, nfea=min(1000, nrow(design)
 {
     ndesign <- nrow(design)
     nparam <- ncol(design)
-    tlen <- ncol(resp)
+    tlen <- nrow(resp)
     nsamples <- maxit+1
     logpost <- apply(resp,2,evallogpost,xi,tlen)
     post <- exp(logpost)
@@ -58,16 +58,16 @@ lasvdgpEI <- function(design, resp, xi, n0=5, nn=10, nfea=min(1000, nrow(design)
                 samples = samples)
     return(ret)
 }
-evalLasvdgpEI <- function(design, resp, candid, xi, nn=10, nfea=min(1000, nrow(design)),
+evalLasvdgpEI <- function(design, resp, candid, xi, n0=5, nn=10, nfea=min(1000, nrow(design)),
                           resvdThres=min(5, nn-n0), every=min(5, nn-n0), frac=.95,
                           gstart=1e-4, nthread=4)
 {
     ndesign <- nrow(design)
     ncand <- nrow(candid)
     nparam <- ncol(design)
-    tlen <- ncol(resp)
+    tlen <- nrow(resp)
     kmin <- min(apply((xi-resp)^2,2,sum))
-    out <- .C("evalLasvdgpEI", as.integer(nparam), as.integer(tlen),
+    out <- .C("evalLasvdgpEI", as.integer(nparam), as.integer(ndesign),as.integer(tlen),
               as.integer(ncand), as.integer(n0), as.integer(nn),
               as.integer(nfea), as.integer(resvdThres), as.integer(every),
               as.integer(nthread), as.double(frac), as.double(gstart),
